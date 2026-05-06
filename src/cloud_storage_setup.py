@@ -24,7 +24,7 @@ def setup_gcs(bucket_name, source_file_name, destination_blob_name):
 
 if __name__ == "__main__":
     MY_BUCKET = 'audience_insights_data_lake_sandracastafiore_2026'
-    MY_FILE = '../data_processed/gold/audience_engagement_daily.parquet' 
+    MY_FILE = '../data/04_gold/audience_engagement_daily.parquet' 
     
     setup_gcs(MY_BUCKET, MY_FILE, "audience_engagement_daily.parquet")
 

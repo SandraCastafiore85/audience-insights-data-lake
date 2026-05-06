@@ -1,252 +1,88 @@
 
-
-/audience-engagement-mart
-
-/data
-  /raw
-    ratings.csv
-    movies.csv
-    tags.csv
-    links.csv
-
-/data_processed
-  /bronze
-  /silver
-  /gold
-
-/notebooks
-  01_ingest_and_profile.ipynb
-  02_silver_transformations.ipynb
-  03_gold_metrics.ipynb
-  04_dashboard_exports.ipynb
-
-/sql
-  bronze.sql
-  silver.sql
-  gold.sql
-
-/docs
-  README.md
-  architecture.png
-  product_decisions.md
-  governance.md
-  roadmap.md
-
-/dashboard
-  powerbi.pbix   (or screenshots)
-
-/src
-  pipeline.py
-  
-# Audience Engagement Mart
-
-*Data Product for Cross-Platform Media Analytics*
-
----
-
-## Overview
-
-In a fragmented digital media ecosystem, understanding how audiences engage with content across platforms is critical to informing editorial, marketing, and product decisions.
-
-This is a data product designed to provide a reliable, privacy-conscious, and cost-efficient view of audience behavior, enabling stakeholders to monitor performance and identify opportunities for optimization.
-
-This project simulates a modern data lakehouse implementation using Microsoft Azure and Databricks.
-The scope is defined to demonstrate:
-
-* Product management of data platforms
-* responsible data use and respect of privacy
-* Balancing business needs, cost, and technical constraints
-* Clear communication of trade-offs and design decisions
-
----
-
-## Problem Statement
-
-Audience data is often:
-
-* Fragmented across platforms (web, mobile, streaming)
-* Difficult to interpret without transformation
-* Expensive to process at scale
-* Sensitive from a privacy perspective
-
-Stakeholders need a trusted, accessible dataset that answers key questions such as:
-
-* How is audience engagement evolving over time?
-* Which content is driving the most value?
-* Where are users dropping off?
-
----
-
-## Target Users of the Audience Engagement Mart
-
-### Marketing
-
-* Track engagement trends (DAU, session frequency)
-* Evaluate campaign impact
-
-### Editorial
-
-* monitor content performance
-* Identify high- and low-performing categories
-
-### Data & Analytics
-
-* set a foundation for downstream analysis
-
----
-
-## 📦 Data Product Definition
-
-This data product provides aggregated, analysis-ready metrics describing how users interact with content across platforms.
-
-### Schema
-
-```
-date
-platform
-content_id
-category
-
-dau
-sessions
-avg_session_duration
-total_watch_time
-completion_rate
-```
-
----
-
-## Design Decisions
-
-### 1. Aggregation Level: Daily (Not Real-Time)
-
-We're interested in informing strategy, not managing/monitoring operations. Therefore, we're willing to accept reduced latency in exchange for significantly lower cost and complexity.
-
----
-
-### 2. Pre-Aggregated Metrics (Not Raw Events)
-
-Non-technical stakeholders need user-friendly analytics for quick access. We'll sacrifice some flexibility for faster access to insights.
-
----
-
-### 3. Limited Dimensionality
-
-We're targeting clarity and simplicity in order to avoid metric sprawl.
-This means we won't be able to guarantee support for all niche analyses, but we're winning out on ease of access, usability, shorter time to ship, and simpler maintenance. 
-
----
-
-### 4. Batch Processing Over Streaming
-
-This aligns with our cost-efficiency goals by avoiding unnecessary infrastructure.
-We're accepting that this product will be limited to the analytics use case and won't be designed to support operational decisions.
-
----
-
-## Architecture Overview
-
-The data product is built using a lakehouse architecture:
-
-* **Bronze:** Raw event ingestion (append-only)
-* **Silver:** Cleaned and standardized event data
-* **Gold:** Aggregated, business-facing metrics (this data product)
-
-Technologies:
-
-Cloud platform: Microsoft Azure
-Storage / Lakehouse: Delta Lake
-Processing & orchestration: Databricks
-Analytics / BI layer: Looker
-
----
-
-## Cost Efficiency
-
-Cost efficiency is a first-class concern in the design of this data product.
-
-### Optimization Strategies
-
-* Partitioning by `date` to minimize scan volume
-* Batch processing on a daily schedule
-* Right-sized compute clusters for predictable workloads
-
-### Design
-
-This product prioritizes cost-efficiency and reliability over low-latency processing.
-
----
-
-## Data Governance & Privacy
-
-Assuming sensitivity of audience data, this product is designed with privacy by default:
-
-* No personally identifiable information (PII) included
-* User-level data is aggregated prior to exposure
-* Consent-aware filtering applied (`consent_flag = true`)
-
-### Access model:
-
-* Gold layer is safe for broad internal consumption
-* Lower layers (Bronze/Silver) are restricted
-
----
-
-## AI / ML Readiness
-
-While this product is not designed for direct model training, it should provide a strong foundation for downstream ML use cases, including:
-
-* Engagement scoring
-* Content recommendation systems
-* Audience segmentation
-
----
-
-## Alignment with Modern Data Architecture
-
-Decentralized data ownership and data-as-a-product thinking:
-
-* Clear definition of users and use cases
-* Explicit ownership of the data product
-* Focus on usability, reliability, and discoverability
-
----
-
-## Future Enhancements
-
-* Near-real-time ingestion for operational dashboards
-* More granular segmentation (device, geography)
-* Integration with experimentation frameworks (A/B testing)
-* Expansion into additional data products (e.g., content metadata mart, user features)
-
----
-
-## Example Use Cases
-
-* Identify top-performing content categories by watch time
-* Detect drops in completion rates for specific programs
-
----
-
+## Audience Engagement Mart
+Data Product for Cross-Platform Media Analytics
+------------------------------
+## 🎯 Overview
+In a fragmented digital media ecosystem, understanding how audiences engage with content across platforms is critical. This is a Data Product designed to provide a reliable, privacy-conscious, and cost-efficient view of behavior, enabling stakeholders to monitor performance and identify optimization opportunities.
+This implementation demonstrates:
+
+* Product Management of data platforms (balancing trade-offs).
+* Modern Data Engineering via a Medallion architecture (Bronze/Silver/Gold).
+* Responsible Data Use through privacy-by-design and PII exclusion.
+
+------------------------------
+## 📋 Problem Statement & Strategy
+Audience data is typically fragmented, expensive to process, and sensitive. This product targets marketing and editorial stakeholders who need to answer:
+
+* How is engagement evolving over time?
+* Which content categories drive the most watch time?
+* Where should we prioritize editorial resources?
+
+## Strategic Design Decisions
+
+   1. Aggregation Level (Daily): Strategically chosen over real-time to significantly reduce infrastructure costs while still meeting weekly/monthly strategy needs.
+   2. Pre-Aggregated Metrics: Sacrifices raw-event flexibility to ensure non-technical users have "instant-on" access to cthe metrics they need.
+   3. Batch over Streaming: Prioritizes reliability and right-sized compute clusters for predictable cloud billing.
+
+------------------------------
+## 🚀 Technical Architecture
+The pipeline follows a Lakehouse pattern, automating the movement of data from local discovery to cloud-scale visualization.
+
+* Source: Local Parquet files (simulating cross-platform events).
+** Source data: F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets: History and Context. ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4, Article 19 (December 2015), 19 pages. DOI=<http://dx.doi.org/10.1145/2827872>
+* Bronze (Storage): Raw ingestion into Google Cloud Storage (GCS).
+* Silver/Gold (Warehouse): Google BigQuery utilizing an External Table strategy. This allows for a "Zero-Copy" architecture where BigQuery queries GCS directly, minimizing storage costs.
+* BI Layer: Looker Studio for executive dashboards.
+
+## 🛠️ Tech Stack
+
+* Language: Python 3.12 (Isolated .venv).
+* Cloud Platform: Google Cloud (GCP).
+* Region: northamerica-northeast1 (Montreal, Canada), supposing a need for data residency compliance.
+* Automation: Python google-cloud-storage SDK & GCloud CLI.
+
+------------------------------
+## 🔧 Implementation & Setup## 1. Cloud Ingestion (Python)
+I developed src/cloud_storage_setup.py to automate:
+
+* ADC Authentication: Securely linking local environments to GCP without hardcoded keys.
+* Regional Provisioning: Programmatically creating buckets in Montreal.
+* Automated Upload: Mapping local data_processed files to cloud blobs.
+
+## 2. Warehousing (BigQuery)
+To enable Looker Studio, I mapped the Gold-layer Parquet files to a BigQuery schema:
+
+bq mk --external_table_definition=PARQUET=gs://[BUCKET_NAME]/*.parquet \
+audience_insights_dataset.daily_engagement
+
+------------------------------
+## 🐞 Critical Debugging & Lessons Learned
+Building this product required resolving several real-world infrastructure hurdles:
+
+* Billing & Quota Management: Resolved 403 errors by programmatically linking the project to a billing account via CLI—a common hurdle in new cloud environments.
+* Permission Orchestration: Fixed macOS-specific CLI conflicts in ~/.config/gcloud using ownership (chown) and permission (chmod) adjustments.
+* Regional Alignment: Navigated the constraint that GCS Buckets and BigQuery Datasets must be co-located (Montreal) to prevent query execution failures.
+
+------------------------------
 ## 📁 Repository Structure
 
-```
-/notebooks
-  01_ingest
-  02_transform
-  03_aggregate
+├── dashboards/         # Looker Studio PDF exports/links
+├── data/               # Raw source files (CSV)
+├── data_processed/     # Medallion Layers (Parquet)
+│   ├── bronze/         
+│   ├── silver/         
+│   └── gold/           # Final 'Data Product' source
+├── notebooks/          # logic for transformations
+├── src/                # Cloud infrastructure automation (Python)
+├── requirements.txt    # Project dependencies
+└── README.md
 
-/docs
-  product_overview.md
-  governance.md
-  finops.md
+------------------------------
+## 📈 Future Enhancements
 
-/architecture
-  diagram.png
-```
-
----
-
+* Airflow Integration: Refactor the Python ingestion and BigQuery setup into an Apache Airflow DAG for robust scheduling.
+* Sentiment analysis: Integrate the tags.csv dataset to perform Sentiment Analysis on audience feedback by joining user-generated tags with engagement metrics.
+* ML Foundations: Integrating engagement scoring models directly into the Silver-to-Gold transformation.
 
 
 
