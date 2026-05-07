@@ -73,7 +73,7 @@ audience_insights_dataset_2026.daily_engagement
 
 ---
 
-## 🐞 Debugging
+## Debugging
 
 La construction de ce produit a nécessité la résolution de plusieurs défis d’infrastructure réels :
 
@@ -83,7 +83,7 @@ La construction de ce produit a nécessité la résolution de plusieurs défis d
 
 ---
 
-## 📁 Structure du repository
+## Structure du repository
 
 ```
 ├── dashboards          # Exports PDF / liens Looker Studio (en cours)
@@ -99,7 +99,7 @@ La construction de ce produit a nécessité la résolution de plusieurs défis d
 
 ---
 
-## 📈 Améliorations futures
+## Améliorations futures
 
 * Intégration Airflow : refactoriser l’ingestion Python et la configuration BigQuery en DAG Apache Airflow pour une orchestration robuste.
 * Analyse de sentiment : intégrer le dataset `tags.csv` pour analyser le sentiment des retours utilisateurs en joignant les tags générés par les utilisateurs avec les métriques d’engagement.
@@ -107,10 +107,10 @@ La construction de ce produit a nécessité la résolution de plusieurs défis d
 
 
 ## Audience Engagement Mart
-Data Product for Cross-Platform Media Analytics
+Data Product for Media Analytics
 ------------------------------
-## 🎯 Overview
-In a fragmented digital media ecosystem, understanding how audiences engage with content across platforms is critical. This is a Data Product designed to provide a reliable, privacy-conscious, and cost-efficient view of behavior, enabling stakeholders to monitor performance and identify optimization opportunities.
+## Overview
+Understanding how audiences engage with content is critical. This is a Data Product designed to provide a reliable, privacy-conscious, and cost-efficient view of behavior, enabling stakeholders to monitor performance and identify optimization opportunities.
 This implementation demonstrates:
 
 * Product Management of data platforms (balancing trade-offs).
@@ -118,7 +118,7 @@ This implementation demonstrates:
 * Responsible Data Use through privacy-by-design and PII exclusion.
 
 ------------------------------
-## 📋 Problem Statement & Strategy
+## Problem Statement & Strategy
 Audience data is typically fragmented, expensive to process, and sensitive. This product targets marketing and editorial stakeholders who need to answer:
 
 * How is engagement evolving over time?
@@ -132,7 +132,7 @@ Audience data is typically fragmented, expensive to process, and sensitive. This
    3. Batch over Streaming: Prioritizes reliability and right-sized compute clusters for predictable cloud billing.
 
 ------------------------------
-## 🚀 Technical Architecture
+## Technical Architecture
 The pipeline follows a Lakehouse pattern, automating the movement of data from local discovery to cloud-scale visualization.
 
 * Source: Local Parquet files (simulating cross-platform events).
@@ -141,7 +141,7 @@ The pipeline follows a Lakehouse pattern, automating the movement of data from l
 * Silver/Gold (Warehouse): Google BigQuery utilizing an External Table strategy. This allows for a "Zero-Copy" architecture where BigQuery queries GCS directly, minimizing storage costs.
 * BI Layer: Looker Studio for executive dashboards.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 * Language: Python 3.12 (Isolated .venv).
 * Cloud Platform: Google Cloud (GCP).
@@ -149,7 +149,9 @@ The pipeline follows a Lakehouse pattern, automating the movement of data from l
 * Automation: Python google-cloud-storage SDK & GCloud CLI.
 
 ------------------------------
-## 🔧 Implementation & Setup## 1. Cloud Ingestion (Python)
+## Implementation & Setup
+
+## 1. Cloud Ingestion (Python)
 I developed src/cloud_storage_setup.py to automate:
 
 * ADC Authentication: Securely linking local environments to GCP without hardcoded keys.
@@ -163,7 +165,7 @@ bq mk --external_table_definition=PARQUET=gs://[BUCKET_NAME]/*.parquet \
 audience_insights_dataset_2026.daily_engagement
 
 ------------------------------
-## 🐞 Critical Debugging & Lessons Learned
+## Critical Debugging & Lessons Learned
 Building this product required resolving several real-world infrastructure hurdles:
 
 * Billing & Quota Management: Resolved 403 errors by programmatically linking the project to a billing account via CLI—a common hurdle in new cloud environments.
@@ -171,7 +173,7 @@ Building this product required resolving several real-world infrastructure hurdl
 * Regional Alignment: Navigated the constraint that GCS Buckets and BigQuery Datasets must be co-located (Montreal) to prevent query execution failures.
 
 ------------------------------
-## 📁 Repository Structure
+## Repository Structure
 
 ├── dashboards          # Looker Studio PDF exports/links (under construction)
 ├── data
@@ -183,7 +185,7 @@ Building this product required resolving several real-world infrastructure hurdl
 ├── requirements.txt    # Project dependencies
 └── README.md   
 ------------------------------
-## 📈 Future Enhancements
+## Future Enhancements
 
 * Airflow Integration: Refactor the Python ingestion and BigQuery setup into an Apache Airflow DAG for robust scheduling.
 * Sentiment analysis: Integrate the tags.csv dataset to perform Sentiment Analysis on audience feedback by joining user-generated tags with engagement metrics.
